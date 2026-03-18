@@ -1,0 +1,9 @@
+geopandas
+matplotlib
+osmnx
+owslib
+pandas
+streamlit
+folium
+streamlit-folium
+branca
