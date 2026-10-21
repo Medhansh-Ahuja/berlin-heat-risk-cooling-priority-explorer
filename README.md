@@ -87,12 +87,14 @@ The analysis pipeline includes:
 - **Difference:** green areas were **1.02°C cooler on average**
 
 ### District-level findings
-- Heat exposure varies across Berlin districts
+- **Mitte** is the hottest district, with a mean surface temperature of **33.0°C** at 14:00
+- **Steglitz-Zehlendorf** is the coolest, at **30.2°C**, a gap of about **2.8°C** between districts
 - District aggregation reveals differences that are not visible in city-wide averages alone
 
 ### Cooling-priority findings
-- Non-green hot zones emerge as the strongest cooling-intervention priorities
-- The prioritization layer turns the project from descriptive visualization into a planning-oriented workflow
+- **3,242 of 33,887 zones** (about 10%) are classified as **Very High** priority
+- The largest numbers of Very High zones are in Marzahn-Hellersdorf, Treptow-Köpenick and Pankow
+- Non-green hot zones emerge as the strongest cooling-intervention priorities, which turns the project from descriptive visualization into a planning-oriented workflow
 
 ---
 
@@ -132,11 +134,42 @@ This makes the project usable as an exploratory dashboard rather than only a sta
 
 ```text
 berlin-heat-risk-cooling-priority-explorer/
-├── app.py
-├── analysis.py
+├── app.py                 # Streamlit dashboard
+├── analysis.py            # data download, processing, figures and priority zones
 ├── requirements.txt
-├── README.md
-├── .gitignore
-├── data/
-├── figures/
-└── slides/
+├── data/                  # processed outputs used by the dashboard
+├── figures/               # static maps and charts
+└── presentation/          # project slides (PDF)
+```
+
+---
+
+## How to run
+
+```bash
+git clone https://github.com/Medhansh-Ahuja/berlin-heat-risk-cooling-priority-explorer.git
+cd berlin-heat-risk-cooling-priority-explorer
+pip install -r requirements.txt
+
+# Launch the dashboard (uses the processed files in data/)
+streamlit run app.py
+
+# Optional: rebuild the analysis from source data
+python analysis.py
+```
+
+`analysis.py` downloads the raw surface-temperature layer from the Berlin WFS service when it is not present locally. The processed GeoJSON files in `data/` are slightly simplified (0.5 m tolerance) to keep the repository small; this has no visible effect on the maps.
+
+---
+
+## Presentation
+
+A short slide deck summarising the project: [Berlin_Heat_Risk_Explorer_Presentation.pdf](presentation/Berlin_Heat_Risk_Explorer_Presentation.pdf)
+
+---
+
+## Limitations and next steps
+
+- The priority score is currently driven by **surface temperature (hazard)**, with green areas down-weighted. A fuller heat-risk model would also include **exposure** (population density) and **vulnerability** (e.g. share of residents aged 65+).
+- Surface temperature at 14:00 is not the same as the air temperature people experience; night-time heat would add another important dimension.
+- Some zones on district borders are not assigned to a district and appear without a district label.
