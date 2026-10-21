@@ -2,6 +2,10 @@
 
 A geospatial urban-climate decision-support project that identifies heat hotspots in Berlin and prioritizes non-green hot zones for cooling interventions.
 
+[![Open the live app](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://berlin-heat-risk.streamlit.app/)
+
+**Live demo:** [berlin-heat-risk.streamlit.app](https://berlin-heat-risk.streamlit.app/)
+
 ## Project overview
 
 Berlin Heat Risk & Cooling Priority Explorer is designed as more than a heat map.  
