@@ -467,7 +467,7 @@ selected_district = st.sidebar.selectbox("District", district_options)
 priority_options = ["All", "Very High", "High", "Medium", "Low"]
 selected_priority = st.sidebar.selectbox("Priority class", priority_options)
 
-show_green = st.sidebar.checkbox("Show green spaces", value=True)
+show_green = st.sidebar.checkbox("Show green spaces", value=False)
 
 if st.sidebar.button("Refresh live weather"):
     load_live_weather.clear()
@@ -831,9 +831,33 @@ with tab2:
     if filtered_gdf.empty:
         st.warning("No zones match the selected filters.")
     else:
-        map_green = green_gdf if show_green else None
-        folium_map = build_map(filtered_gdf, map_green)
-        st_folium(folium_map, width=1200, height=650)
+        # Drawing all ~34k zones at once is slow in the browser, so the
+        # unfiltered map shows only High / Very High zones unless asked.
+        map_gdf = filtered_gdf
+        if selected_district == "All" and selected_priority == "All":
+            show_all_zones = st.checkbox(
+                "Show all zones on the map (slower)", value=False
+            )
+            if not show_all_zones:
+                map_gdf = filtered_gdf[
+                    filtered_gdf["priority_class"].isin(["Very High", "High"])
+                ]
+                st.caption(
+                    f"Map shows the {len(map_gdf):,} High and Very High priority zones. "
+                    "Pick a district or priority class in the sidebar to explore further."
+                )
+        if show_green:
+            st.caption("Green spaces add a large layer; the map may take a few seconds to load.")
+        map_green = None
+        if show_green:
+            map_green = green_gdf
+            if selected_district != "All":
+                # only draw green spaces inside the selected area
+                minx, miny, maxx, maxy = map_gdf.total_bounds
+                map_green = green_gdf.cx[minx:maxx, miny:maxy]
+        folium_map = build_map(map_gdf, map_green)
+        # returned_objects=[] stops the app from rerunning on every pan/zoom
+        st_folium(folium_map, width=1200, height=650, returned_objects=[])
 
         c1, c2 = st.columns([1.15, 1])
 
