@@ -605,7 +605,18 @@ def priority_color(priority_class):
 
 def build_map(priority_layer, green_layer=None):
     center = [52.52, 13.405]
-    m = folium.Map(location=center, zoom_start=10, tiles="CartoDB positron")
+    # Esri light-grey basemap: free and needs no API key
+    m = folium.Map(location=center, zoom_start=10, tiles=None)
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        attr="Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
+        name="Light grey basemap",
+        max_zoom=16,
+    ).add_to(m)
+
+    # zoom the map to the zones currently shown
+    minx, miny, maxx, maxy = priority_layer.total_bounds
+    m.fit_bounds([[miny, minx], [maxy, maxx]])
 
     if green_layer is not None:
         folium.GeoJson(
